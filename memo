@@ -1,0 +1,48 @@
+;;; add load-path
+(let ((default-directory (expand-file-name "~/.emacs.d/site-lisp")))
+  (add-to-list 'load-path default-directory)
+  (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+      (normal-top-level-add-subdirs-to-load-path)))
+
+;;; fix c++11 indent
+(defadvice c-lineup-arglist (around my activate)
+  "Improve indentation of continued C++11 lambda function opened as argument."
+  (setq ad-return-value
+        (if (and (equal major-mode 'c++-mode)
+                 (ignore-errors
+                   (save-excursion
+                     (goto-char (c-langelem-pos langelem))
+                     ;; Detect "[...](" or "[...]{". preceded by "," or "(",
+                     ;;   and with unclosed brace.
+                     (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
+            0 ; no additional indent
+          ad-do-it))) ; default behavior
+
+;; el-get
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+;; utilities
+(el-get-bundle ddskk)
+(el-get-bundle redo+)
+;; mode
+(el-get-bundle csv-mode)
+(el-get-bundle csharp-mode)
+(el-get-bundle web-mode)
+;; support
+(el-get-bundle flycheck :type github :pkgname "flycheck/flycheck")
+(el-get-bundle flycheck-pop-tip :type github :pkgname "flycheck/flycheck-pos-tip")
+(el-get-bundle yasnippet)
+(el-get-bundle auto-complete)
+(el-get-bundle auto-complete-clang-async)
+;; libraries
+(el-get-bundle dash)
+(el-get-bundle seq)
+(el-get-bundle let-alist)
+(el-get-bundle pos-tip)
+

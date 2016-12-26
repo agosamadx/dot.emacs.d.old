@@ -1,0 +1,10 @@
+/auto-save-alist/
+/eshell/
+/elpa/
+/bin/
+/packages/
+/irony/
+network-security.data
+tramp
+ac-comphist.dat
+*.elc
