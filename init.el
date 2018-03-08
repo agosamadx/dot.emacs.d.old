@@ -1,6 +1,7 @@
 ;;; setting
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message nil)
+(setq completion-ignore-case t)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq kill-whole-line t)
@@ -10,9 +11,6 @@
 (setq-default indent-tabs-mode nil)
 (setq-default truncate-lines t)
 (setq custom-file (locate-user-emacs-file "custom.el"))
-
-;;; disable scrollbar
-(set-scroll-bar-mode nil)
 
 ;;; theme
 (setq custom-theme-directory "~/.emacs.d/themes/")
@@ -25,6 +23,10 @@
 (when (memq window-system '(mac ns))
   (load-file "~/.emacs.d/mac.el"))
 
+;;; for windows
+(when window-system '(windows-nt)
+      (load-file "~/.emacs.d/windows.el"))
+
 ;;; frame
 (defvar frame-parameters
   '((width . 180)
@@ -34,6 +36,7 @@
     (tool-bar-lines . nil)))
 
 (when (memq window-system '(x w32 mac ns))
+  (set-scroll-bar-mode nil)
   (setq frame-title-format '(multiple-frames "%b" ("" invocation-name)))
   (setq default-frame-alist frame-parameters))
 
@@ -65,9 +68,6 @@
    (unless (member (get-buffer "*scratch*") (buffer-list))
      (make-scratch t))))
 
-;;; settings.elをロードする
-(add-hook 'find-file-hook 'load-dir-settings)
-
 ;;; c-mode
 (add-hook 'c-mode-common-hook
           '(lambda()
@@ -75,7 +75,6 @@
              (setq c-basic-offset 4)
              (setq tab-width 4)
              (setq indent-tabs-mode nil)
-             (local-set-key "\C-t" 'ff-find-other-file)
              (local-set-key "\C-h" 'hungry-backspace)
              (local-set-key "\C-d" 'hungry-delete)
              (local-set-key "\C-f" 'hungry-forward-char)
@@ -92,23 +91,11 @@
              (c-set-offset 'innamespace 0)
              (c-set-offset 'arglist-close 0)
              (c-set-offset 'arglist-cont-nonempty 0)))
-;; (defadvice c-lineup-arglist (around my activate)
-;;   "Improve indentation of continued C++11 lambda function opened as argument."
-;;   (setq ad-return-value
-;;         (if (and (equal major-mode 'c++-mode)
-;;                  (ignore-errors
-;;                    (save-excursion
-;;                      (goto-char (c-langelem-pos langelem))
-;;                      ;; Detect "[...](" or "[...]{". preceded by "," or "(",
-;;                      ;;   and with unclosed brace.
-;;                      (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
-;;             0 ; no additional indent
-;;           ad-do-it))) ; default behavior
+(add-hook 'c++-mode-hook 'whitespace-mode)
 
 ;;; csharp-mode
 (add-hook 'csharp-mode-hook
           '(lambda()
-             (local-set-key "\C-t" 'ff-find-other-file)
              (local-set-key "\C-h" 'hungry-backspace)
              (local-set-key "\C-d" 'hungry-delete)
              (local-set-key "\C-f" 'hungry-forward-char)
@@ -117,10 +104,9 @@
 ;;; js-mode
 (add-hook 'js-mode-hook
           '(lambda()
-             (setq js-indent-level 2)
-             (setq tab-width 2)
+             (setq js-indent-level 4)
+             (setq tab-width 4)
              (setq indent-tabs-mode nil)
-             (local-set-key "\C-t" 'ff-find-other-file)
              (local-set-key "\C-h" 'hungry-backspace)
              (local-set-key "\C-d" 'hungry-delete)
              (local-set-key "\C-f" 'hungry-forward-char)
@@ -153,7 +139,7 @@
 
 ;; install packages
 (eval-when-compile (require 'cl))
-(defvar package-list '(ddskk undo-tree csharp-mode web-mode swift-mode yasnippet flycheck flycheck-irony flycheck-pos-tip irony company-irony rtags cmake-ide))
+(defvar package-list '(undo-tree csharp-mode web-mode swift-mode cmake-mode yasnippet flycheck flycheck-irony flycheck-pos-tip irony company-irony rtags cmake-ide ddskk))
 (let ((not-installed
        (loop for x in package-list
              when (not (package-installed-p x))
@@ -193,7 +179,7 @@
                (setq web-mode-script-padding 0)
                (setq web-mode-style-padding 0)
                (setq indent-tabs-mode nil)
-               (local-set-key "\C-t" 'ff-find-other-file)
+               (setq web-mode-enable-auto-indentation nil)
                (local-set-key "\C-h" 'hungry-backspace)
                (local-set-key "\C-d" 'hungry-delete)
                (local-set-key "\C-f" 'hungry-forward-char)
@@ -206,6 +192,13 @@
                (local-set-key "\C-d" 'hungry-delete)
                (local-set-key "\C-f" 'hungry-forward-char)
                (local-set-key "\C-b" 'hungry-backward-char))))
+
+(when (require 'cmake-mode nil t)
+  (setq auto-mode-alist
+        (append
+         '(("CMakeLists\\.txt$" . cmake-mode)
+           ("\\.cmake$" . cmake-mode))
+         auto-mode-alist)))
 
 ;; yasnippet
 (when (require 'yasnippet nil t)
@@ -225,14 +218,14 @@
   (setq company-minimum-prefix-length 2)
   (setq company-selection-wrap-around t)
   (define-key company-active-map (kbd "C-h") nil)
-  (global-company-mode))
+  (global-company-mode)
+  (add-hook 'c++-mode-hook 'company-mode))
 
 ;; company-irony
 (when (require 'irony nil t)
   (when (require 'company-irony nil t)
     (add-hook 'c-mode-hook 'irony-mode)
     (add-hook 'c++-mode-hook 'irony-mode)
-    (add-hook 'objc-mode-hook 'irony-mode)
     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
     (add-to-list 'company-backends 'company-irony)
     (add-hook 'irony-mode-hook
@@ -244,10 +237,16 @@
                    [remap complete-symbol]
                    'irony-completion-at-point-async)))))
 
-(when (require 'cmake-ide nil t)
- (setq cmake-ide-rdm-executable (executable-find "rdm"))
- (setq cmake-ide-rc-executable  (executable-find "rc")))
+;; cmake-ide
+(let ((rdm (executable-find "rdm"))
+      (rc (executable-find "rc")))
+  (when (and rdm rc)
+    (when (require 'cmake-ide nil t)
+      (setq cmake-ide-rdm-executable (executable-find "rdm"))
+      (setq cmake-ide-rc-executable  (executable-find "rc")))
+    (when (require 'rtags nil t)
+      (rtags-enable-standard-keybindings c-mode-base-map)
+      (cmake-ide-setup)
+      (define-key c++-mode-map "\C-t" 'rtags-find-symbol-at-point)
+      (define-key c++-mode-map "\C-cc" 'cmake-ide-compile))))
 
-(when (require 'rtags nil t)
-  (rtags-enable-standard-keybindings c-mode-base-map)
-  (cmake-ide-setup))

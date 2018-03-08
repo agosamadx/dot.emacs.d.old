@@ -82,16 +82,3 @@
             (backward-char tab-width)
           (backward-char (- tab-width (% line-current-position tab-width))))
       (backward-char 1))))
-
-;;; .settings.el をロードする
-(defun recursive-load-dir-settings (currentfile)
-  (let ((lds-dir (locate-dominating-file currentfile ".settings.el")))
-    (when lds-dir
-      (progn
-        (load-file (concat lds-dir ".settings.el"))
-        (recursive-load-dir-settings
-         (file-truename(concat lds-dir "..")))))))
-(defun load-dir-settings()
-  (interactive)
-  (when buffer-file-name
-    (recursive-load-dir-settings buffer-file-name)))

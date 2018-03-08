@@ -1,4 +1,4 @@
-/auto-save-alist/
+/auto-save-list/
 /eshell/
 /elpa/
 /bin/
@@ -8,3 +8,4 @@ network-security.data
 tramp
 ac-comphist.dat
 *.elc
+custom.el
