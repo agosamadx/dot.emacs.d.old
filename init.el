@@ -91,21 +91,12 @@
              (c-set-offset 'innamespace 0)
              (c-set-offset 'arglist-close 0)
              (c-set-offset 'arglist-cont-nonempty 0)))
-(add-hook 'c++-mode-hook 'whitespace-mode)
-
-;;; csharp-mode
-(add-hook 'csharp-mode-hook
-          '(lambda()
-             (local-set-key "\C-h" 'hungry-backspace)
-             (local-set-key "\C-d" 'hungry-delete)
-             (local-set-key "\C-f" 'hungry-forward-char)
-             (local-set-key "\C-b" 'hungry-backward-char)))
 
 ;;; js-mode
 (add-hook 'js-mode-hook
           '(lambda()
-             (setq js-indent-level 4)
-             (setq tab-width 4)
+             (setq js-indent-level 2)
+             (setq tab-width 2)
              (setq indent-tabs-mode nil)
              (local-set-key "\C-h" 'hungry-backspace)
              (local-set-key "\C-d" 'hungry-delete)
@@ -129,6 +120,7 @@
 (setq whitespace-display-mappings
       '((tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
 (setq whitespace-action '(auto-cleanup))
+(add-hook 'c++-mode-hook 'whitespace-mode)
 
 ;;; package.el
 (require 'package)
@@ -139,7 +131,7 @@
 
 ;; install packages
 (eval-when-compile (require 'cl))
-(defvar package-list '(undo-tree csharp-mode web-mode swift-mode cmake-mode yasnippet flycheck flycheck-irony flycheck-pos-tip irony company-irony rtags cmake-ide ddskk))
+(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide web-mode js2-mode cmake-mode))
 (let ((not-installed
        (loop for x in package-list
              when (not (package-installed-p x))
@@ -168,9 +160,8 @@
         (append
          '(("\\.php$" . web-mode)
            ("\\.tpl$" . web-mode)
-           ("\\.html?$"     . web-mode))
+           ("\\.html?$" . web-mode))
          auto-mode-alist))
-
   (add-hook 'web-mode-hook
             '(lambda()
                (setq web-mode-markup-indent-offset 4)
@@ -185,9 +176,15 @@
                (local-set-key "\C-f" 'hungry-forward-char)
                (local-set-key "\C-b" 'hungry-backward-char))))
 
-(when (require 'swift-mode nil t)
-  (add-hook 'swift-mode-hook
+(when (require 'js2-mode nil t)
+  (setq auto-mode-alist
+        (append
+         '(("\\.jsx$" . js2-jsx-mode))
+         auto-mode-alist))
+  (add-hook 'js2-mode-hook
             '(lambda()
+               (setq js2-basic-offset 2)
+               (setq tab-width 2)
                (local-set-key "\C-h" 'hungry-backspace)
                (local-set-key "\C-d" 'hungry-delete)
                (local-set-key "\C-f" 'hungry-forward-char)
@@ -204,30 +201,31 @@
 (when (require 'yasnippet nil t)
   (yas-global-mode))
 
-;; flycheck
-(when (require 'flycheck nil t)
-  (add-hook 'c-mode-common-hook 'flycheck-mode);
-  (when (require 'flycheck-irony nil t)
-    (add-hook 'flycheck-mode-hook 'flycheck-irony-setup))
-  (when (require 'flycheck-pos-tip nil t)
-    (flycheck-pos-tip-mode)))
+;; irony
+(when (require 'irony nil t)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (add-hook 'c++-mode-hook 'irony-mode)
+  ;; flycheck
+  (when (require 'flycheck nil t)
+    (add-hook 'c-mode-hook 'flycheck-mode)
+    (add-hook 'c++-mode-hook 'flycheck-mode)
+    (when (require 'flycheck-irony nil t)
+      (add-hook 'flycheck-mode-hook 'flycheck-irony-setup))
+    (when (require 'flycheck-pos-tip nil t)
+      (flycheck-pos-tip-mode))))
 
 ;; company
 (when (require 'company nil t)
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 2)
   (setq company-selection-wrap-around t)
-  (define-key company-active-map (kbd "C-h") nil)
-  (global-company-mode)
-  (add-hook 'c++-mode-hook 'company-mode))
-
-;; company-irony
-(when (require 'irony nil t)
+  (add-hook 'c-mode-hook 'company-mode)
+  (add-hook 'c++-mode-hook 'company-mode)
+  ;;(define-key company-active-map (kbd "C-h") nil))
   (when (require 'company-irony nil t)
-    (add-hook 'c-mode-hook 'irony-mode)
-    (add-hook 'c++-mode-hook 'irony-mode)
-    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
     (add-to-list 'company-backends 'company-irony)
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
     (add-hook 'irony-mode-hook
               '(lambda()
                  (define-key irony-mode-map
@@ -249,4 +247,3 @@
       (cmake-ide-setup)
       (define-key c++-mode-map "\C-t" 'rtags-find-symbol-at-point)
       (define-key c++-mode-map "\C-cc" 'cmake-ide-compile))))
-
