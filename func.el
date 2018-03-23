@@ -25,8 +25,8 @@
     (back-to-indentation)))
 
 ;;; 行頭のスペースをtab-width分ずつ消す
-(defun hungry-backspace (arg)
-  (interactive "*P")
+(defun hungry-backspace ()
+  (interactive)
   (let ((line-point (- (point) (line-beginning-position))))
     (if (string-match
          "^\s+$"
@@ -41,8 +41,8 @@
       (backward-delete-char 1))))
 
 ;;; スペースが続いている時はtab-widthずつ消す
-(defun hungry-delete (arg)
-  (interactive "*P")
+(defun hungry-delete ()
+  (interactive)
   (let ((here (point)))
     (skip-chars-forward " \t")
     (if (/= (point) here)
@@ -50,35 +50,23 @@
       (delete-char 1))))
 
 ;;; スペースが続いている時はタブ幅ごとまとめて移動する
-(defun hungry-forward-char (arg)
-  (interactive "*P")
-  (let* ((line-current-position (- (point) (line-beginning-position)))
-         (line-next-by (- tab-width (% line-current-position tab-width)))
-         (line-next-position
-          (if (< (+ (point) line-next-by) (line-end-position))
-              (+ (point) line-next-by)
-            (line-end-position)))
-         (forward-count
-          (if (= (- line-next-position (point)) 0) 1
-            (- line-next-position (point)))))
-    (if (string-match
-         "^\s+$"
-         (buffer-substring-no-properties
-          (line-beginning-position)
-          line-next-position))
-        (forward-char forward-count)
+(defun hungry-forward-char ()
+  (interactive)
+  (let* ((current (- (point) (line-beginning-position)))
+         (step (- tab-width (% current tab-width)))
+         (candidate (min (+ (point) step) (line-end-position))))
+    (if (and (string-match "^\s+$" (buffer-substring-no-properties (line-beginning-position) candidate))
+             (not (= (point) (line-end-position)))
+             (= (% (- candidate (line-beginning-position)) tab-width) 0))
+        (goto-char candidate)
       (forward-char 1))))
 
 ;;; スペースが続いている時はタブ幅ごとまとめて移動する
-(defun hungry-backward-char (arg)
-  (interactive "*P")
-  (let ((line-current-position (- (point) (line-beginning-position))))
-    (if (string-match
-         "^\s+$"
-         (buffer-substring-no-properties
-          (line-beginning-position)
-          (point)))
-        (if (= (% line-current-position tab-width) 0)
+(defun hungry-backward-char ()
+  (interactive)
+  (let ((current (- (point) (line-beginning-position))))
+    (if (string-match "^\s+$" (buffer-substring-no-properties (line-beginning-position) (point)))
+        (if (= (% current tab-width) 0)
             (backward-char tab-width)
-          (backward-char (- tab-width (% line-current-position tab-width))))
+          (backward-char (- tab-width (% current tab-width))))
       (backward-char 1))))
