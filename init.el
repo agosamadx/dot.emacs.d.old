@@ -179,7 +179,8 @@
 (when (require 'js2-mode nil t)
   (setq auto-mode-alist
         (append
-         '(("\\.jsx$" . js2-jsx-mode))
+         '(("\\.js$" . js2-mode)
+           ("\\.jsx$" . js2-jsx-mode))
          auto-mode-alist))
   (add-hook 'js2-mode-hook
             '(lambda()
