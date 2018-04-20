@@ -27,17 +27,12 @@
 ;;; 行頭のスペースをtab-width分ずつ消す
 (defun hungry-backspace ()
   (interactive)
-  (let ((line-point (- (point) (line-beginning-position))))
-    (if (string-match
-         "^\s+$"
-         (buffer-substring-no-properties
-          (line-beginning-position)
-          (if (< (+ (point) (% line-point tab-width)) (line-end-position))
-              (+ (point) (% line-point tab-width))
-            (line-end-position))))
-        (if (= (% line-point tab-width) 0)
-            (backward-delete-char tab-width)
-          (backward-delete-char (% line-point tab-width)))
+  (let* ((current (- (point) (line-beginning-position)))
+         (nextperiod (min (+ (point) (- tab-width (% current tab-width))) (line-end-position))))
+    (if (and (string-match "^\s+$" (buffer-substring-no-properties (line-beginning-position) nextperiod))
+               (not (= (point) (line-beginning-position)))
+               (= (% (- nextperiod (line-beginning-position)) tab-width) 0))
+        (backward-delete-char (if (= (% current tab-width) 0) tab-width (% current tab-width)))
       (backward-delete-char 1))))
 
 ;;; スペースが続いている時はtab-widthずつ消す
@@ -66,10 +61,10 @@
 ;;; スペースが続いている時はタブ幅ごとまとめて移動する
 (defun hungry-backward-char ()
   (interactive)
-  (backward-char 1)
   (let* ((current (- (point) (line-beginning-position)))
          (nextperiod (min (+ (point) (- tab-width (% current tab-width))) (line-end-position))))
-    (when (and (string-match "^\s+$" (buffer-substring-no-properties (line-beginning-position) nextperiod))
+    (if (and (string-match "^\s+$" (buffer-substring-no-properties (line-beginning-position) nextperiod))
                (not (= (point) (line-beginning-position)))
                (= (% (- nextperiod (line-beginning-position)) tab-width) 0))
-      (backward-char (% current tab-width)))))
+        (backward-char (if (= (% current tab-width) 0) tab-width (% current tab-width)))
+      (backward-char 1))))

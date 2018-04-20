@@ -121,11 +121,11 @@
       '((tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
 (setq whitespace-action '(auto-cleanup))
 (add-hook 'c++-mode-hook 'whitespace-mode)
+(add-hook 'js2-mode-hook 'whitespace-mode)
 
 ;;; package.el
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (setq package-user-dir "~/.emacs.d/packages/")
 (package-initialize)
 
@@ -180,6 +180,7 @@
   (setq auto-mode-alist
         (append
          '(("\\.js$" . js2-mode)
+           ("\\.json$" . js2-mode)
            ("\\.jsx$" . js2-jsx-mode))
          auto-mode-alist))
   (add-hook 'js2-mode-hook
