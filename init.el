@@ -131,7 +131,7 @@
 
 ;; install packages
 (eval-when-compile (require 'cl))
-(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide web-mode js2-mode cmake-mode))
+(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode web-mode js2-mode))
 (let ((not-installed
        (loop for x in package-list
              when (not (package-installed-p x))
