@@ -125,7 +125,7 @@
 
 ;;; package.el
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 (setq package-user-dir "~/.emacs.d/packages/")
 (package-initialize)
 
