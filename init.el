@@ -214,28 +214,27 @@
     (when (require 'flycheck-irony nil t)
       (add-hook 'flycheck-mode-hook 'flycheck-irony-setup))
     (when (require 'flycheck-pos-tip nil t)
-      (flycheck-pos-tip-mode))))
-
-;; company
-(when (require 'company nil t)
-  (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 2)
-  (setq company-selection-wrap-around t)
-  (add-hook 'c-mode-hook 'company-mode)
-  (add-hook 'c++-mode-hook 'company-mode)
-  ;;(define-key company-active-map (kbd "C-h") nil))
-  (when (require 'company-irony nil t)
-    (add-to-list 'company-backends 'company-irony)
-    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-    (add-hook 'irony-mode-hook
-              '(lambda()
-                 (define-key irony-mode-map
-                   [remap completion-at-point]
-                   'irony-completion-at-point-async)
-                 (define-key irony-mode-map
-                   [remap complete-symbol]
-                   'irony-completion-at-point-async)))))
+      (flycheck-pos-tip-mode)))
+  ;; company
+  (when (require 'company nil t)
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 2)
+    (setq company-selection-wrap-around t)
+    (add-hook 'c-mode-hook 'company-mode)
+    (add-hook 'c++-mode-hook 'company-mode)
+    ;;(define-key company-active-map (kbd "C-h") nil))
+    (when (require 'company-irony nil t)
+      (add-to-list 'company-backends 'company-irony)
+      (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+      (add-hook 'irony-mode-hook
+                '(lambda()
+                   (define-key irony-mode-map
+                     [remap completion-at-point]
+                     'irony-completion-at-point-async)
+                   (define-key irony-mode-map
+                     [remap complete-symbol]
+                     'irony-completion-at-point-async))))))
 
 ;; cmake-ide
 (let ((rdm (executable-find "rdm"))
