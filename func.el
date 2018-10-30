@@ -63,7 +63,7 @@
   (interactive)
   (let* ((current (- (point) (line-beginning-position)))
          (div (% current tab-width))
-         (nextperiod (min (+ (point) (- tab-width (if (= div 0) 4 div))) (line-end-position))))
+         (nextperiod (min (+ (point) (- tab-width (if (= div 0) tab-width div))) (line-end-position))))
     (if (and (string-match "^\s+$" (buffer-substring-no-properties (line-beginning-position) nextperiod))
              (not (= (point) (line-beginning-position)))
              (= (% (- nextperiod (line-beginning-position)) tab-width) 0))
