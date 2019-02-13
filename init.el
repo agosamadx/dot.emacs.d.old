@@ -89,6 +89,7 @@
 (add-hook 'c++-mode-hook
           '(lambda()
              (c-set-offset 'innamespace 0)
+             (c-set-offset 'inlambda 0)
              (c-set-offset 'arglist-close 0)
              (c-set-offset 'arglist-cont-nonempty 0)))
 
