@@ -244,7 +244,7 @@
     (when (require 'cmake-ide nil t)
       (setq cmake-ide-rdm-executable (executable-find "rdm"))
       (setq cmake-ide-rc-executable  (executable-find "rc"))
-      (setq cmake-ide-build-pool-dir "~/tmp/")
+      ;;(setq cmake-ide-build-pool-dir "~/tmp/")
       (setq cmake-ide-build-pool-use-persistent-naming t))
     (when (require 'rtags nil t)
       (rtags-enable-standard-keybindings c-mode-base-map)
