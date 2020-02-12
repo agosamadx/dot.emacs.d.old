@@ -11,21 +11,22 @@
 (setq-default indent-tabs-mode nil)
 (setq-default truncate-lines t)
 (setq custom-file (locate-user-emacs-file "custom.el"))
+(load-file custom-file)
 
 ;;; theme
-(setq custom-theme-directory "~/.emacs.d/themes/")
+(setq custom-theme-directory (locate-user-emacs-file "themes/"))
 (load-theme 'custom t)
 
 ;;; func
-(load-file "~/.emacs.d/func.el")
+(load-file (locate-user-emacs-file "func.el"))
 
 ;;; for mac
 (when (memq window-system '(mac ns))
-  (load-file "~/.emacs.d/mac.el"))
+  (load-file (locate-user-emacs-file "mac.el")))
 
 ;;; for windows
 (when window-system '(windows-nt)
-      (load-file "~/.emacs.d/windows.el"))
+      (load-file (locate-user-emacs-file "windows.el")))
 
 ;;; frame
 (defvar frame-parameters
@@ -127,7 +128,7 @@
 ;;; package.el
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(setq package-user-dir "~/.emacs.d/packages/")
+(setq package-user-dir (locate-user-emacs-file "packages/"))
 (package-initialize)
 
 ;; install packages
