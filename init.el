@@ -259,3 +259,5 @@
   (set-face-attribute 'company-preview-common nil :background nil :foreground "lightgrey" :underline t)
   (set-face-attribute 'company-scrollbar-fg nil :background "orange")
   (set-face-attribute 'company-scrollbar-bg nil :background "gray40"))
+(setq cmake-ide-flags-c "-Wall")
+(setq cmake-ide-flags-c++ "-Wall")
