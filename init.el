@@ -11,7 +11,7 @@
 (setq-default indent-tabs-mode nil)
 (setq-default truncate-lines t)
 (setq custom-file (locate-user-emacs-file "custom.el"))
-(load-file custom-file)
+;;(load-file custom-file)
 
 ;;; theme
 (setq custom-theme-directory (locate-user-emacs-file "themes/"))
@@ -132,16 +132,11 @@
 (package-initialize)
 
 ;; install packages
-(eval-when-compile (require 'cl))
 (defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode web-mode js2-mode))
-(let ((not-installed
-       (loop for x in package-list
-             when (not (package-installed-p x))
-             collect x)))
-  (when not-installed
-    (package-refresh-contents)
-    (dolist (pkg not-installed)
-      (package-install pkg))))
+(unless package-archive-contents (package-refresh-contents))
+(dolist (pkg package-list)
+  (unless (package-installed-p pkg)
+    (package-install pkg)))
 
 ;;; ddskk
 (when (require 'skk nil t)
