@@ -94,6 +94,12 @@
              (c-set-offset 'arglist-close 0)
              (c-set-offset 'arglist-cont-nonempty 0)))
 
+(setq auto-mode-alist
+      (append
+       '(("\\.js$" . js-mode)
+         ("\\.json$" . js-mode)
+         ("\\.jsx$" . js-mode))
+       auto-mode-alist))
 ;;; js-mode
 (add-hook 'js-mode-hook
           '(lambda()
@@ -123,7 +129,6 @@
       '((tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
 (setq whitespace-action '(auto-cleanup))
 (add-hook 'c++-mode-hook 'whitespace-mode)
-(add-hook 'js2-mode-hook 'whitespace-mode)
 
 ;;; package.el
 (require 'package)
@@ -132,7 +137,7 @@
 (package-initialize)
 
 ;; install packages
-(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode web-mode js2-mode))
+(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode web-mode))
 (unless package-archive-contents (package-refresh-contents))
 (dolist (pkg package-list)
   (unless (package-installed-p pkg)
@@ -168,22 +173,6 @@
                (setq web-mode-style-padding 0)
                (setq indent-tabs-mode nil)
                (setq web-mode-enable-auto-indentation nil)
-               (local-set-key "\C-h" 'hungry-backspace)
-               (local-set-key "\C-d" 'hungry-delete)
-               (local-set-key "\C-f" 'hungry-forward-char)
-               (local-set-key "\C-b" 'hungry-backward-char))))
-
-(when (require 'js2-mode nil t)
-  (setq auto-mode-alist
-        (append
-         '(("\\.js$" . js2-mode)
-           ("\\.json$" . js2-mode)
-           ("\\.jsx$" . js2-jsx-mode))
-         auto-mode-alist))
-  (add-hook 'js2-mode-hook
-            '(lambda()
-               (setq js2-basic-offset 2)
-               (setq tab-width 2)
                (local-set-key "\C-h" 'hungry-backspace)
                (local-set-key "\C-d" 'hungry-delete)
                (local-set-key "\C-f" 'hungry-forward-char)
@@ -246,7 +235,8 @@
       (rtags-enable-standard-keybindings c-mode-base-map)
       (cmake-ide-setup)
       (define-key c++-mode-map "\C-t" 'rtags-find-symbol-at-point)
-      (define-key c++-mode-map "\C-cc" 'cmake-ide-compile)))
+      (define-key c++-mode-map "\C-cc" 'cmake-ide-compile))
+    (setq ff-always-try-to-create nil))
   (set-face-attribute 'company-tooltip nil :foreground "black" :background "lightgrey")
   (set-face-attribute 'company-tooltip-common nil :foreground "black" :background "lightgrey")
   (set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "blue")
