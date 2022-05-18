@@ -9,3 +9,4 @@ tramp
 ac-comphist.dat
 *.elc
 custom.el
+eln-cache/

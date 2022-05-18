@@ -51,10 +51,10 @@
 (global-set-key "\C-x\C-b" 'electric-buffer-list)
 (global-set-key "\C-a" 'beggining-of-indented-line)
 (global-set-key "\C-k" 'kill-line)
-(global-set-key "\M-k" '(lambda () (interactive) (kill-line 0)))
+(global-set-key "\M-k" (lambda () (interactive) (kill-line 0)))
 (add-hook 'electric-buffer-menu-mode-hook
-          '(lambda()
-             (local-set-key "x" 'Buffer-menu-execute)))
+          (lambda()
+            (local-set-key "x" 'Buffer-menu-execute)))
 
 ;;; scratch自動復活
 (add-hook
@@ -71,15 +71,15 @@
 
 ;;; c-mode
 (add-hook 'c-mode-common-hook
-          '(lambda()
-             (setq c-default-style "stroustrup")
-             (setq c-basic-offset 4)
-             (setq tab-width 4)
-             (setq indent-tabs-mode nil)
-             (local-set-key "\C-h" 'hungry-backspace)
-             (local-set-key "\C-d" 'hungry-delete)
-             (local-set-key "\C-f" 'hungry-forward-char)
-             (local-set-key "\C-b" 'hungry-backward-char)))
+          (lambda()
+            (setq c-default-style "stroustrup")
+            (setq c-basic-offset 4)
+            (setq tab-width 4)
+            (setq indent-tabs-mode nil)
+            (local-set-key "\C-h" 'hungry-backspace)
+            (local-set-key "\C-d" 'hungry-delete)
+            (local-set-key "\C-f" 'hungry-forward-char)
+            (local-set-key "\C-b" 'hungry-backward-char)))
 
 ;;; c++-mode
 (setq auto-mode-alist
@@ -88,11 +88,11 @@
          ("\\.hpp$"     . c++-mode))
        auto-mode-alist))
 (add-hook 'c++-mode-hook
-          '(lambda()
-             (c-set-offset 'innamespace 0)
-             (c-set-offset 'inlambda 0)
-             (c-set-offset 'arglist-close 0)
-             (c-set-offset 'arglist-cont-nonempty 0)))
+          (lambda()
+            (c-set-offset 'innamespace 0)
+            (c-set-offset 'inlambda 0)
+            (c-set-offset 'arglist-close 0)
+            (c-set-offset 'arglist-cont-nonempty 0)))
 
 (setq auto-mode-alist
       (append
@@ -102,14 +102,14 @@
        auto-mode-alist))
 ;;; js-mode
 (add-hook 'js-mode-hook
-          '(lambda()
-             (setq js-indent-level 2)
-             (setq tab-width 2)
-             (setq indent-tabs-mode nil)
-             (local-set-key "\C-h" 'hungry-backspace)
-             (local-set-key "\C-d" 'hungry-delete)
-             (local-set-key "\C-f" 'hungry-forward-char)
-             (local-set-key "\C-b" 'hungry-backward-char)))
+          (lambda()
+            (setq js-indent-level 2)
+            (setq tab-width 2)
+            (setq indent-tabs-mode nil)
+            (local-set-key "\C-h" 'hungry-backspace)
+            (local-set-key "\C-d" 'hungry-delete)
+            (local-set-key "\C-f" 'hungry-forward-char)
+            (local-set-key "\C-b" 'hungry-backward-char)))
 
 ;;; white space
 (require 'whitespace)
@@ -165,18 +165,18 @@
            ("\\.html?$" . web-mode))
          auto-mode-alist))
   (add-hook 'web-mode-hook
-            '(lambda()
-               (setq web-mode-markup-indent-offset 4)
-               (setq web-mode-enable-auto-pairing nil)
-               (setq web-mode-enable-auto-quoting nil)
-               (setq web-mode-script-padding 0)
-               (setq web-mode-style-padding 0)
-               (setq indent-tabs-mode nil)
-               (setq web-mode-enable-auto-indentation nil)
-               (local-set-key "\C-h" 'hungry-backspace)
-               (local-set-key "\C-d" 'hungry-delete)
-               (local-set-key "\C-f" 'hungry-forward-char)
-               (local-set-key "\C-b" 'hungry-backward-char))))
+            (lambda()
+              (setq web-mode-markup-indent-offset 4)
+              (setq web-mode-enable-auto-pairing nil)
+              (setq web-mode-enable-auto-quoting nil)
+              (setq web-mode-script-padding 0)
+              (setq web-mode-style-padding 0)
+              (setq indent-tabs-mode nil)
+              (setq web-mode-enable-auto-indentation nil)
+              (local-set-key "\C-h" 'hungry-backspace)
+              (local-set-key "\C-d" 'hungry-delete)
+              (local-set-key "\C-f" 'hungry-forward-char)
+              (local-set-key "\C-b" 'hungry-backward-char))))
 
 (when (require 'cmake-mode nil t)
   (setq auto-mode-alist
@@ -214,13 +214,13 @@
       (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
       (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
       (add-hook 'irony-mode-hook
-                '(lambda()
-                   (define-key irony-mode-map
-                     [remap completion-at-point]
-                     'irony-completion-at-point-async)
-                   (define-key irony-mode-map
-                     [remap complete-symbol]
-                     'irony-completion-at-point-async))))))
+                (lambda()
+                  (define-key irony-mode-map
+                    [remap completion-at-point]
+                    'irony-completion-at-point-async)
+                  (define-key irony-mode-map
+                    [remap complete-symbol]
+                    'irony-completion-at-point-async))))))
 
 ;; cmake-ide
 (let ((rdm (executable-find "rdm"))
