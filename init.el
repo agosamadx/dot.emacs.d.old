@@ -11,7 +11,7 @@
 (setq-default indent-tabs-mode nil)
 (setq-default truncate-lines t)
 (setq custom-file (locate-user-emacs-file "custom.el"))
-;;(load-file custom-file)
+(load-file custom-file)
 
 ;;; theme
 (setq custom-theme-directory (locate-user-emacs-file "themes/"))
@@ -56,19 +56,6 @@
           (lambda()
             (local-set-key "x" 'Buffer-menu-execute)))
 
-;;; scratch自動復活
-(add-hook
- 'kill-buffer-query-functions
- (lambda ()
-   (if (string= "*scratch*" (buffer-name))
-       (progn (make-scratch nil) nil)
-     t)))
-(add-hook
- 'after-save-hook
- (lambda ()
-   (unless (member (get-buffer "*scratch*") (buffer-list))
-     (make-scratch t))))
-
 ;;; c-mode
 (add-hook 'c-mode-common-hook
           (lambda()
@@ -85,7 +72,7 @@
 (setq auto-mode-alist
       (append
        '(("\\.h$" . c++-mode)
-         ("\\.hpp$"     . c++-mode))
+         ("\\.hpp$" . c++-mode))
        auto-mode-alist))
 (add-hook 'c++-mode-hook
           (lambda()
@@ -137,7 +124,7 @@
 (package-initialize)
 
 ;; install packages
-(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode web-mode))
+(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode))
 (unless package-archive-contents (package-refresh-contents))
 (dolist (pkg package-list)
   (unless (package-installed-p pkg)
@@ -155,28 +142,6 @@
 (when (require 'undo-tree nil t)
   (global-undo-tree-mode)
   (global-set-key (kbd "C-M-/") 'undo-tree-redo))
-
-;;; web-mode
-(when (require 'web-mode nil t)
-  (setq auto-mode-alist
-        (append
-         '(("\\.php$" . web-mode)
-           ("\\.tpl$" . web-mode)
-           ("\\.html?$" . web-mode))
-         auto-mode-alist))
-  (add-hook 'web-mode-hook
-            (lambda()
-              (setq web-mode-markup-indent-offset 4)
-              (setq web-mode-enable-auto-pairing nil)
-              (setq web-mode-enable-auto-quoting nil)
-              (setq web-mode-script-padding 0)
-              (setq web-mode-style-padding 0)
-              (setq indent-tabs-mode nil)
-              (setq web-mode-enable-auto-indentation nil)
-              (local-set-key "\C-h" 'hungry-backspace)
-              (local-set-key "\C-d" 'hungry-delete)
-              (local-set-key "\C-f" 'hungry-forward-char)
-              (local-set-key "\C-b" 'hungry-backward-char))))
 
 (when (require 'cmake-mode nil t)
   (setq auto-mode-alist
