@@ -149,9 +149,7 @@
   (global-set-key (kbd "C-M-/") 'undo-tree-redo))
 (setq undo-tree-auto-save-history nil)
 
-(when (require 'csharp-mode nil t)
-  (defun my-csharp-mode-setup ()
-    )
+(when (require 'omnisharp-mode nil t)
   (add-hook 'csharp-mode-hook
             (lambda ()
               (omnisharp-mode)
