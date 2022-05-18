@@ -1,3 +1,6 @@
+;;; server
+(server-start)
+
 ;;; setting
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message nil)
@@ -32,9 +35,10 @@
 (defvar frame-parameters
   '((width . 180)
     (height . 50)
-    (top . 64)
+    (top . 32)
     (left . 192)
-    (tool-bar-lines . nil)))
+    (tool-bar-lines . nil)
+    (font . "PlemolJP-10")))
 
 (when (memq window-system '(x w32 mac ns))
   (set-scroll-bar-mode nil)
@@ -87,6 +91,7 @@
          ("\\.json$" . js-mode)
          ("\\.jsx$" . js-mode))
        auto-mode-alist))
+
 ;;; js-mode
 (add-hook 'js-mode-hook
           (lambda()
@@ -124,7 +129,7 @@
 (package-initialize)
 
 ;; install packages
-(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode))
+(defvar package-list '(undo-tree ddskk yasnippet irony flycheck flycheck-irony flycheck-pos-tip company company-irony rtags cmake-ide cmake-mode omnisharp))
 (unless package-archive-contents (package-refresh-contents))
 (dolist (pkg package-list)
   (unless (package-installed-p pkg)
@@ -142,6 +147,25 @@
 (when (require 'undo-tree nil t)
   (global-undo-tree-mode)
   (global-set-key (kbd "C-M-/") 'undo-tree-redo))
+(setq undo-tree-auto-save-history nil)
+
+(when (require 'csharp-mode nil t)
+  (defun my-csharp-mode-setup ()
+    )
+  (add-hook 'csharp-mode-hook
+            (lambda ()
+              (omnisharp-mode)
+              (setq indent-tabs-mode nil)
+              (setq c-syntactic-indentation t)
+              (c-set-style "ellemtel")
+              (setq c-basic-offset 4)
+              (setq truncate-lines t)
+              (setq tab-width 4)
+              (setq evil-shift-width 4)
+              ;;csharp-mode README.md recommends this too
+              ;;(electric-pair-mode 1)       ;; Emacs 24
+              ;;(electric-pair-local-mode 1) ;; Emacs 25
+              (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring))))
 
 (when (require 'cmake-mode nil t)
   (setq auto-mode-alist
@@ -162,6 +186,7 @@
   (when (require 'flycheck nil t)
     (add-hook 'c-mode-hook 'flycheck-mode)
     (add-hook 'c++-mode-hook 'flycheck-mode)
+    (add-hook 'csharp-mode-hook 'flycheck-mode)
     (when (require 'flycheck-irony nil t)
       (add-hook 'flycheck-mode-hook 'flycheck-irony-setup))
     (when (require 'flycheck-pos-tip nil t)
@@ -173,9 +198,11 @@
     (setq company-selection-wrap-around t)
     (add-hook 'c-mode-hook 'company-mode)
     (add-hook 'c++-mode-hook 'company-mode)
+    (add-hook 'csharp-mode-hook 'company-mode)
     ;;(define-key company-active-map (kbd "C-h") nil))
     (when (require 'company-irony nil t)
       (add-to-list 'company-backends 'company-irony)
+      (add-to-list 'company-backends 'company-omnisharp)
       (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
       (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
       (add-hook 'irony-mode-hook

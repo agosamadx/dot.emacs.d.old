@@ -10,3 +10,5 @@ ac-comphist.dat
 *.elc
 custom.el
 eln-cache/
+.cache
+server/
